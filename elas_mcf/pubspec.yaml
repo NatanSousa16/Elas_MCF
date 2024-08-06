@@ -1,6 +1,6 @@
 name: elas_mcf
-description: "A new Flutter project."
-publish_to: 'none'
+description: "Um novo projeto desenvolvido pelo MCF em parceiria com Natan Sousa"
+publish_to: 'Natan Sousa'
 version: 0.1.0
 
 environment:
@@ -9,7 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences: ^2.0.13
+  shared_preferences: ^2.0.6
+  geolocator: ^9.0.1
+  url_launcher: ^6.0.9
 
 
 dev_dependencies:
