@@ -19,8 +19,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/estrela.png
-    - assets/adicao.png
     - assets/fundo.png
-    - assets/pesquisa.png
+    - assets/leis_publicas.png
+    - assets/instituicoes_apoio.png
+    - assets/numeros_emergencia.png
+    - assets/sos.png
     - assets/seta.png
