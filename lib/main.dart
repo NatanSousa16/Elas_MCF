@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 void main() {
   // Definir o modo de interface do usuário para tela cheia
@@ -12,7 +14,7 @@ void main() {
 const appTitle = 'Bem vinda, Joice';
 const leisPublicas = 'LEIS PÚBLICAS';
 const instituicoesApoio = 'INSTITUIÇÕES DE APOIO';
-const numerosEmergencia = 'NÚMEROS EMERGÊNCIAIS';
+const numerosEmergencia = 'NÚMEROS EMERGENCIAIS';
 const funcao = 'FUNÇÃO';
 const sos = 'SOS';
 
@@ -435,27 +437,114 @@ class NumerosEmergenciaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Background(
-        child: Center(
-          child: Text(
-            'Conteúdo da página de $numerosEmergencia',
-            style: TextStyle(color: Colors.white),
-          ),
+      backgroundColor: Colors.purpleAccent,  // Mesma cor de fundo
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            EmergencyContactItem(
+              title: 'Central de Atendimento à Mulher – 180',
+              phoneNumber: 'tel:180',
+            ),
+            SizedBox(height: 20),
+            EmergencyContactItem(
+              title: 'Polícia Militar do Ceará - 190',
+              phoneNumber: 'tel:190',
+              description: 'Localizado ao lado do posto de combustível de Mizael',
+            ),
+            SizedBox(height: 20),
+            EmergencyContactItem(
+              title: 'Casa da Mulher Brasileira (Fortaleza)',
+              phoneNumber: 'tel:+558531082950',
+            ),
+            SizedBox(height: 20),
+            EmergencyContactItem(
+              title: 'Conselho Municipal dos Direitos da Mulher (COMDIM)',
+              phoneNumber: 'tel:+558821721092',
+              description: 'Rua lateral do CVT - Quixeré',
+            ),
+            SizedBox(height: 20),
+            EmergencyContactItem(
+              title: 'Conselho Municipal de Assistência Social (CRAS)',
+              phoneNumber: 'tel:+558821721092',
+              description: 'Rua lateral do CVT - Quixeré',
+            ),
+            SizedBox(height: 20),
+            EmergencyContactItem(
+              title: 'Conselho Municipal dos Direitos da Pessoa Idosa (CMDPI)',
+              phoneNumber: 'tel:+558821721092',
+              description: 'Rua lateral do CVT - Quixeré',
+            ),
+            SizedBox(height: 20),
+            EmergencyContactItem(
+              title: 'Conselho Municipal dos Direitos da Criança e do Adolescente (CMDCA)',
+              phoneNumber: 'tel:+5588997551632',
+              description: 'Rua lateral do CVT - Quixeré',
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class FuncaoPage extends StatelessWidget {
+// Componente para os itens de número de emergência
+class EmergencyContactItem extends StatelessWidget {
+  final String title;
+  final String phoneNumber;
+  final String? description;
+
+  EmergencyContactItem({
+    required this.title,
+    required this.phoneNumber,
+    this.description,
+  });
+
+  // Função para abrir o discador com a função launchUrl
+  void _launchPhoneDialer(String number) async {
+    final Uri url = Uri.parse(number);
+    if (!await launchUrl(url)) {
+      throw 'Could not launch $number';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Background(
-        child: Center(
-          child: Text(
-            'Conteúdo da página de $funcao',
-            style: TextStyle(color: Colors.white),
+    return GestureDetector(
+      onTap: () => _launchPhoneDialer(phoneNumber),  // Abre o telefone ao clicar
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 4,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple,
+                ),
+              ),
+              if (description != null) ...[
+                SizedBox(height: 8),
+                Text(
+                  description!,
+                  style: TextStyle(color: Colors.black),
+                ),
+              ],
+            ],
           ),
         ),
       ),

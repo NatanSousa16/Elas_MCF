@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Este aplicativo usa sua localização para enviar alertas de emergência.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Este aplicativo precisa de acesso contínuo à sua localização para emergências.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Este aplicativo precisa de acesso à localização mesmo em segundo plano para alertas de SOS.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
