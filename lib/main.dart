@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 
 void main() {
   // Definir o modo de interface do usuário para tela cheia
@@ -54,6 +54,77 @@ class Background extends StatelessWidget {
   }
 }
 
+class InitialSetupPage extends StatefulWidget {
+  @override
+  _InitialSetupPageState createState() => _InitialSetupPageState();
+}
+
+class _InitialSetupPageState extends State<InitialSetupPage> {
+  final _formKey = GlobalKey<FormState>();
+  String? _nome, _cpf, _tipoSanguineo, _emergencia;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Bem vindo! Preencha suas informações'),
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: <Widget>[
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Nome'),
+                onSaved: (value) => _nome = value,
+                validator: (value) =>
+                    value!.isEmpty ? 'Por favor, insira seu nome' : null,
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'CPF'),
+                onSaved: (value) => _cpf = value,
+                validator: (value) =>
+                    value!.isEmpty ? 'Por favor, insira seu CPF' : null,
+              ),
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Tipo Sanguíneo'),
+                onSaved: (value) => _tipoSanguineo = value,
+                validator: (value) => value!.isEmpty
+                    ? 'Por favor, insira seu tipo sanguíneo'
+                    : null,
+              ),
+              TextFormField(
+                decoration:
+                    InputDecoration(labelText: 'Número de Emergência'),
+                onSaved: (value) => _emergencia = value,
+                validator: (value) =>
+                    value!.isEmpty ? 'Por favor, insira um número' : null,
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _saveData,
+                child: Text('Salvar'),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _saveData() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('nome', _nome!);
+      await prefs.setString('cpf', _cpf!);
+      await prefs.setString('tipoSanguineo', _tipoSanguineo!);
+      await prefs.setString('emergencia', _emergencia!);
+      Navigator.pushReplacementNamed(context, '/home');
+    }
+  }
+}
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -242,7 +313,8 @@ class LeisPublicasPage extends StatelessWidget {
                   'Benefício de um salário mínimo pago mensalmente a idosos ou pessoas com deficiência que não podem garantir sua sobrevivência.',
               additionalInfo: 'Quem tem direito?\n\n'
                   '1. Pessoa idosa com 65 anos ou mais e renda familiar de até 1/4 do salário mínimo por pessoa.\n'
-                  '2. O Cadastro Único deve estar atualizado há menos de dois anos.',
+                  '2. Pessoa com transtorno global de desenvolvimento(Autistas). Quem recebe acima de um salário mínimo não recebe\n'
+                  '3. O Cadastro Único deve estar atualizado há menos de dois anos.',
             ),
             SizedBox(height: 20),
 
@@ -364,13 +436,13 @@ class InstituicoesApoioPage extends StatelessWidget {
             SizedBox(height: 20),
             SupportGroupItem(
               icon: Icons.self_improvement,
-              title: 'Grupo semanal de autocuidado no CAPS',
-              description: 'Com enfermeiro e assistente social',
+              title: 'Grupo semanal de autocuidado em saúde mental - CAPS -',
+              description: 'Com enfermeira e assistente social',
             ),
             SizedBox(height: 20),
             SupportGroupItem(
               icon: Icons.psychology,
-              title: 'Grupo quinzenal de psicoterapia no CAPS',
+              title: 'Grupo quinzenal de psicoterapia integrativa em saúde mental com terapeuta holístico no CAPS',
               description: 'E grupo mensal de práticas integrativas',
             ),
             SizedBox(height: 20),
