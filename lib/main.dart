@@ -11,11 +11,11 @@ void main() {
   runApp(MyApp());
 }
 
-const appTitle = 'Bem vinda, Joice';
+const appTitle = 'Bem vinda, ';
 const leisPublicas = 'LEIS PÚBLICAS';
 const instituicoesApoio = 'INSTITUIÇÕES DE APOIO';
 const numerosEmergencia = 'NÚMEROS EMERGENCIAIS';
-const funcao = 'FUNÇÃO';
+
 const sos = 'SOS';
 
 class MyApp extends StatelessWidget {
@@ -23,10 +23,173 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: LoginPage(),
     );
   }
 }
+
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _sobrenomeController = TextEditingController();
+  final TextEditingController _cpfController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nomeController.dispose();
+    _sobrenomeController.dispose();
+    _cpfController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Background(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 20),
+                _buildTextField('Nome', _nomeController),
+                SizedBox(height: 10),
+                _buildTextField('Sobrenome', _sobrenomeController),
+                SizedBox(height: 10),
+                _buildTextField('CPF', _cpfController, keyboardType: TextInputType.number),
+                SizedBox(height: 20),
+                _buildLoginButton(context),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(String label, TextEditingController controller, {TextInputType keyboardType = TextInputType.text}) {
+    return Container(
+      width: double.infinity,
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(color: Colors.white),
+          filled: true,
+          fillColor: Colors.black54,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide.none,
+          ),
+        ),
+        keyboardType: keyboardType,
+        style: TextStyle(color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildLoginButton(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xFFFFD600),
+          foregroundColor: Colors.black,
+          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(
+                nome: _nomeController.text,
+                sobrenome: _sobrenomeController.text,
+                cpf: _cpfController.text,
+              ),
+            ),
+          );
+        },
+        child: Text('Entrar'),
+      ),
+    );
+  }
+}
+
+  Widget _buildTextField(String label, TextEditingController controller, {TextInputType keyboardType = TextInputType.text}) {
+    return Container(
+      width: double.infinity,
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: TextStyle(color: Colors.white),
+          filled: true,
+          fillColor: Colors.black54,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide.none,
+          ),
+        ),
+        keyboardType: keyboardType,
+        style: TextStyle(color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _buildLoginButton(BuildContext context) {
+  final TextEditingController _nomeController = TextEditingController();
+  final TextEditingController _sobrenomeController = TextEditingController();
+  final TextEditingController _cpfController = TextEditingController();
+    return Container(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Color(0xFFFFD600), // Cor do botão
+          foregroundColor: Colors.black, // Cor do texto
+          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10), // Arredondar os cantos do botão
+          ),
+        ),
+        onPressed: () {
+
+
+          // Você pode adicionar lógica adicional aqui para validar os números, se necessário
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => HomePage(
+                nome: _nomeController.text,
+                sobrenome: _sobrenomeController.text,
+                cpf: _cpfController.text,
+              ),
+            ),
+          );
+        },
+        child: Text('Entrar'),
+      ),
+    );
+  }
+
+
+
 
 // Widget reutilizável para o fundo com imagem
 class Background extends StatelessWidget {
@@ -55,7 +218,12 @@ class Background extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
-  @override
+  final String nome;
+  final String sobrenome;
+  final String cpf;
+  HomePage({required this.nome, required this.sobrenome, required this.cpf});
+
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Background(
@@ -65,7 +233,7 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                appTitle,
+                'Bem vinda, $nome', // Exibe o nome aqui
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -560,7 +728,7 @@ class SOSPage extends StatelessWidget {
       body: Background(
         child: Center(
           child: Text(
-            'Conteúdo da página de $sos',
+            'Conteúdo da página de SoS',
             style: TextStyle(color: Colors.white),
           ),
         ),
