@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 
 void main() {
   // Definir o modo de interface do usuário para tela cheia
@@ -37,12 +37,14 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _sobrenomeController = TextEditingController();
   final TextEditingController _cpfController = TextEditingController();
+  final TextEditingController _whatsappController = TextEditingController(); // Novo campo para WhatsApp
 
   @override
   void dispose() {
     _nomeController.dispose();
     _sobrenomeController.dispose();
     _cpfController.dispose();
+    _whatsappController.dispose(); // Libera o controlador de WhatsApp
     super.dispose();
   }
 
@@ -70,6 +72,8 @@ class _LoginPageState extends State<LoginPage> {
                 _buildTextField('Sobrenome', _sobrenomeController),
                 SizedBox(height: 10),
                 _buildTextField('CPF', _cpfController, keyboardType: TextInputType.number),
+                SizedBox(height: 10),
+                _buildTextField('WhatsApp', _whatsappController, keyboardType: TextInputType.phone), // Campo WhatsApp
                 SizedBox(height: 20),
                 _buildLoginButton(context),
               ],
@@ -121,6 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                 nome: _nomeController.text,
                 sobrenome: _sobrenomeController.text,
                 cpf: _cpfController.text,
+                whatsapp: _whatsappController.text, // Passando o número de WhatsApp
               ),
             ),
           );
@@ -130,66 +135,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
-  Widget _buildTextField(String label, TextEditingController controller, {TextInputType keyboardType = TextInputType.text}) {
-    return Container(
-      width: double.infinity,
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(color: Colors.white),
-          filled: true,
-          fillColor: Colors.black54,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10.0),
-            borderSide: BorderSide.none,
-          ),
-        ),
-        keyboardType: keyboardType,
-        style: TextStyle(color: Colors.white),
-      ),
-    );
-  }
-
-  Widget _buildLoginButton(BuildContext context) {
-  final TextEditingController _nomeController = TextEditingController();
-  final TextEditingController _sobrenomeController = TextEditingController();
-  final TextEditingController _cpfController = TextEditingController();
-    return Container(
-      width: double.infinity,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFFFFD600), // Cor do botão
-          foregroundColor: Colors.black, // Cor do texto
-          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10), // Arredondar os cantos do botão
-          ),
-        ),
-        onPressed: () {
-
-
-          // Você pode adicionar lógica adicional aqui para validar os números, se necessário
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(
-                nome: _nomeController.text,
-                sobrenome: _sobrenomeController.text,
-                cpf: _cpfController.text,
-              ),
-            ),
-          );
-        },
-        child: Text('Entrar'),
-      ),
-    );
-  }
-
-
-
 
 // Widget reutilizável para o fundo com imagem
 class Background extends StatelessWidget {
@@ -221,9 +166,16 @@ class HomePage extends StatelessWidget {
   final String nome;
   final String sobrenome;
   final String cpf;
-  HomePage({required this.nome, required this.sobrenome, required this.cpf});
+  final String whatsapp; // Recebendo o número de WhatsApp
 
- @override
+  HomePage({
+    required this.nome,
+    required this.sobrenome,
+    required this.cpf,
+    required this.whatsapp, // Passando o número de WhatsApp
+  });
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Background(
@@ -243,32 +195,37 @@ class HomePage extends StatelessWidget {
               SizedBox(height: 50),
               MenuButton(
                 iconPath: 'assets/leis_publicas.png',
-                label: leisPublicas,
+                label: 'Leis Públicas',
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => LeisPublicasPage())),
               ),
               MenuButton(
                 iconPath: 'assets/instituicoes_apoio.png',
-                label: instituicoesApoio,
+                label: 'Instituições de Apoio',
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => InstituicoesApoioPage())),
               ),
               MenuButton(
                 iconPath: 'assets/numeros_emergencia.png',
-                label: numerosEmergencia,
+                label: 'Números de Emergência',
                 onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => NumerosEmergenciaPage())),
               ),
               Spacer(),
               Align(
-                alignment: Alignment.bottomCenter,  // Centraliza o botão na parte inferior
+                alignment: Alignment.bottomCenter,
                 child: Container(
-                  margin: EdgeInsets.only(bottom: 20),  // Margem inferior
-                  width: 200,  // Diminui o tamanho do botão SOS
+                  margin: EdgeInsets.only(bottom: 20),
+                  width: 200,
                   child: MenuButton(
                     iconPath: 'assets/sos.png',
-                    label: sos,
+                    label: 'SOS',
                     backgroundColor: Color(0xFFFFD600),
                     textColor: Colors.blue,
-                    hideArrow: true,  // Remove a seta
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SOSPage())),
+                    hideArrow: true,
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => SOSPage(whatsapp: whatsapp), // Passando o WhatsApp para a SOSPage
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -279,6 +236,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
 
 class MenuButton extends StatelessWidget {
   final String iconPath;
@@ -721,17 +679,147 @@ class EmergencyContactItem extends StatelessWidget {
   }
 }
 
-class SOSPage extends StatelessWidget {
+class SOSPage extends StatefulWidget {
+  final String whatsapp;
+
+  SOSPage({required this.whatsapp});
+
+  @override
+  _SOSPageState createState() => _SOSPageState();
+}
+
+class _SOSPageState extends State<SOSPage> {
+  Position? _currentPosition; // Variável para armazenar a posição atual
+  String _locationMessage = 'Buscando localização...'; // Mensagem inicial de localização
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation(); // Pega a localização inicial quando a página é aberta
+  }
+
+  // Função para buscar a localização
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Verifica se o serviço de localização está habilitado
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      setState(() {
+        _locationMessage = 'Serviço de localização está desabilitado.';
+      });
+      return;
+    }
+
+    // Verifica as permissões de localização
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        setState(() {
+          _locationMessage = 'Permissão de localização negada';
+        });
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      setState(() {
+        _locationMessage = 'Permissão de localização negada permanentemente';
+      });
+      return;
+    }
+
+    // Obtém a localização atual
+    Geolocator.getPositionStream().listen((Position position) {
+      setState(() {
+        _currentPosition = position;
+        _locationMessage =
+            'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+      });
+    });
+  }
+
+  // Função para enviar a mensagem SOS com a localização
+  void _sendSOSMessage() {
+    final message = 'Emergência! Preciso de ajuda. Minha localização atual é: $_locationMessage';
+    final url = 'https://wa.me/${widget.whatsapp}?text=${Uri.encodeComponent(message)}';
+
+    if (canLaunch(url) != null) {
+      launch(url);
+    } else {
+      print('Não foi possível abrir o WhatsApp');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Background(
         child: Center(
-          child: Text(
-            'Conteúdo da página de SoS',
-            style: TextStyle(color: Colors.white),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Caixas de diálogo acima do botão "Enviar SOS"
+              _buildCustomBox(
+                'Este recurso é destinado exclusivamente para situações reais de emergência.',
+              ),
+              SizedBox(height: 10),
+              _buildCustomBox(
+                'O uso indevido, como trotes ou chamadas falsas, é ilegal e será tratado com seriedade.',
+              ),
+              SizedBox(height: 10),
+              _buildCustomBox(
+                'Caso o sistema detecte uso impróprio, as autoridades competentes serão automaticamente notificadas.',
+              ),
+              SizedBox(height: 10),
+              _buildCustomBox(
+                'Lembre-se: fazer trote é crime e pode colocar vidas em risco. Utilize esta função apenas quando '
+                'estiver em perigo real ou precisar de assistência urgente.',
+              ),
+              SizedBox(height: 30),
+
+              // Exibe a localização atualizada
+              Text(
+                'Localização atual: $_locationMessage',
+                style: TextStyle(color: Colors.redAccent, fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
+
+              // Botão para enviar SOS
+              ElevatedButton(
+                onPressed: _sendSOSMessage,
+                child: Text('Enviar SOS com localização'),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Função para criar os quadros com o estilo branco como os botões do segundo anexo
+  Widget _buildCustomBox(String text) {
+    return Container(
+      padding: EdgeInsets.all(15),
+      margin: EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: Colors.white, // Cor branca como nos botões do segundo anexo
+        borderRadius: BorderRadius.circular(10), // Borda arredondada
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12, // Adiciona uma leve sombra
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Text(
+        text,
+        style: TextStyle(color: Colors.black, fontSize: 16), // Texto preto
+        textAlign: TextAlign.center, // Centraliza o texto
       ),
     );
   }
