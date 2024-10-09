@@ -73,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(height: 10),
                 _buildTextField('CPF', _cpfController, keyboardType: TextInputType.number),
                 SizedBox(height: 10),
-                _buildTextField('WhatsApp', _whatsappController, keyboardType: TextInputType.phone), // Campo WhatsApp
+                _buildTextField('Número de Contato para Emergência\nExemplo:(5588911111111)', _whatsappController, keyboardType: TextInputType.phone), // Campo WhatsApp
                 SizedBox(height: 20),
                 _buildLoginButton(context),
               ],
@@ -783,7 +783,7 @@ class _SOSPageState extends State<SOSPage> {
               // Exibe a localização atualizada
               Text(
                 'Localização atual: $_locationMessage',
-                style: TextStyle(color: Colors.redAccent, fontSize: 14),
+                style: TextStyle(color: Colors.black, fontSize: 14),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 20),
